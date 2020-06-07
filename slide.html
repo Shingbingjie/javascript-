@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+        
+        ul,
+        li {
+            list-style-type: none;
+        }
+        
+        #slide {
+            height: 400px;
+            width: 600px;
+            margin: 100px auto;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .pic-list {
+            width: 5400px;
+            height: 400px;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+        
+        .pic-list li {
+            float: left;
+        }
+        
+        .pic-list li img {
+            width: 600px;
+            height: 400px;
+        }
+        
+        .btn {
+            opacity: 0.6;
+            position: absolute;
+            top: 45%;
+            height: 50px;
+            width: 30px;
+            cursor: pointer;
+            user-select: none;
+            background: black;
+            font-size: 25px;
+            line-height: 50px;
+            text-align: center;
+            color: white;
+        }
+        
+        .left {
+            border-radius: 0px 25px 25px 0px;
+        }
+        
+        .right {
+            border-radius: 25px 0px 0px 25px;
+            right: 0;
+        }
+        
+        .icon-list {
+            position: absolute;
+            bottom: 10px;
+            left: 5%;
+            cursor: pointer;
+        }
+        
+        .icon-list li {
+            float: left;
+            margin: 0 5px;
+            height: 10px;
+            width: 10px;
+            border-radius: 50%;
+            background: #ccc;
+        }
+        
+        .icon-list .active {
+            background: #fff;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="slide">
+        <ul class="pic-list">
+            <li><img src="images/pic1.jpg"></li>
+            <li><img src="images/pic2.jpg"></li>
+            <li><img src="images/pic3.jpg"></li>
+            <li><img src="images/pic4.jpg"></li>
+            <li><img src="images/pic5.jpg"></li>
+            <li><img src="images/pic6.jpg"></li>
+            <li><img src="images/pic7.jpg"></li>
+            <li><img src="images/pic8.jpg"></li>
+            <li><img src="images/pic1.jpg"></li>
+        </ul>
+        <div class="btn left">&lt;</div>
+        <div class="btn right">&gt;</div>
+        <ul class="icon-list">
+            <li class="active"></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+        </ul>
+    </div>
+    <script src="js/jquery.js"></script>
+    <script>
+        $(function() {
+            var timer = null; //声明一个全局定时器
+            var index = 0;
+
+            $(".right").click(function() { //下一张
+                next();
+            });
+            $(".left").click(function() { //上一张
+                prev();
+            })
+
+            function next() {
+                index++;
+                if (index > 7) {
+
+                    //当图片到最后一张时跳回第一张
+
+                    $(".pic-list").animate({
+                        left: -(index) * 600
+                    }, 0);
+                    index = 0;
+                    $(".pic-list").animate({
+                        left: 0
+                    }, 0);
+                }
+                $(".pic-list").animate({
+                    left: -index * 600
+                }, 0);
+                iconHover(index);
+            }
+
+            function prev() {
+                index--;
+                if (index < 0) {
+                    index = 7;
+                    $(".pic-list").animate({
+                        left: -(index + 1) * 600
+                    }, 0);
+                }
+                $(".pic-list").animate({
+                    left: -index * 600
+                }, 500);
+                iconHover(index);
+            }
+
+            function auto() {
+                timer = setInterval(function() { //设置自动播放的定时器
+                    next();
+                    iconHover(index);
+                }, 2000)
+            }
+            auto();
+            $("#slide").mouseover(function() { //鼠标移入 定时器取消
+                clearInterval(timer);
+                $('.btn').css("opacity", 0.5)
+            })
+            $("#slide").mouseleave(function() { //鼠标离开 定时器开启
+                auto();
+                $('.btn').css("opacity", 0)
+            })
+            $(".icon-list li").mouseover(function() {
+                var index = $(this).index();
+                $(".pic-list").animate({
+                    left: -index * 600
+                }, 0);
+                iconHover(index);
+            })
+
+            function iconHover(index) {
+                $(".icon-list li").eq(index).addClass("active").siblings().removeClass("active");
+            }
+
+        })
+    </script>
+
+</body>
+
+</html>
